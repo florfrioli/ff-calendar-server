@@ -1,0 +1,39 @@
+{
+    "name": "comit2021-ff-calendar-nodejs",
+    "version": "1.0.0",
+    "description": "Migración del proyecto ff calendar a nodejs con express y mongoDB",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon server/server",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://gitlab.com/florfrioli/comit2021-ff-calendar-nodejs.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitlab.com/florfrioli/comit2021-ff-calendar-nodejs/issues"
+    },
+    "homepage": "https://gitlab.com/florfrioli/comit2021-ff-calendar-nodejs#readme",
+    "dependencies": {
+        "bcrypt-nodejs": "^0.0.3",
+        "connect-flash": "^0.1.1",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-session": "^1.17.1",
+        "firebase": "^8.3.1",
+        "firebase-admin": "^9.5.0",
+        "jsonwebtoken": "^8.5.1",
+        "moment": "^2.29.1",
+        "mongoose": "^5.11.19",
+        "passport": "^0.4.1",
+        "passport-local": "^1.0.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    }
+}
