@@ -6,15 +6,12 @@ const userModel = require('../models/userSchema');
 module.exports = {
         async getEspecialista(req, res) { // Nos devuelve un usuario, en caso de no encontrarlo devuelve 404
             const { params: { idordni } } = req;
-            if (esValidoDNI(idordni)) {
-                const especialista = await EspecialistaModel.findOne({ "dni": idordni });
-                if (especialista) return res.status(200).json({ especialista });
-                else return res.status(404).json({ error: "Not found/No encontrado" });
-            } else {
-                const especialista = await EspecialistaModel.findOne({ "_id": idordni });
-                if (especialista) return res.status(200).json({ especialista });
-                else return res.status(404).json({ error: "Not found/No encontrado" });
-            }
+
+            const especialista = await EspecialistaModel.findOne({ $or: [{ "dni": idordni }, { "id": idordni }] });
+            if (especialista) return res.status(200).json({ especialista });
+            else return res.status(404).json({ error: "Especialista not found/Especialista no encontrado" });
+
+
         },
 
         async postEspecialista(req, res) { // Agrega un usuario si se pasan nombre, apellido y email en el body de la request
@@ -27,7 +24,7 @@ module.exports = {
                         const especialista = new Especialista(prefijo, name, lastname, dni, matricula, especialidad, phone, email);
                         const newEspecialista = new EspecialistaModel(especialista.getDTO());
                         newEspecialista.save(newEspecialista);
-                        return res.status(201).json({ ok: "especialista creado correctamente!" });
+                        return res.status(201).json({ ok: "Especialista creado correctamente!" });
                     } else {
                         return res.status(400).json({ error: "Ya existe un especialista con ese DNI" });
                     }
@@ -35,7 +32,7 @@ module.exports = {
                     return res.status(400).json({ error: "Faltan propiedades" });
                 }
             } else {
-                return res.status(400).json({ error: "DNI INVALIDO" });
+                return res.status(400).json({ error: "El DNI no tiene un formato válido" });
             }
         },
 
@@ -56,12 +53,12 @@ module.exports = {
                 const updateEspecialista = await EspecialistaModel.updateOne({ dni }, update);
 
                 if (updateEspecialista.n) { //n == numero de documentos modificados
-                    return res.status(200).json({ ok: true });
+                    return res.status(200).json({ ok: "El especialista fue modificado." });
                 } else {
                     return res.status(404).json({ error: "Especialista not found/Especialista no encontrado" });
                 }
             } else {
-                return res.status(404).json({ error: "DNI INVALIDO" });
+                return res.status(404).json({ error: "El DNI no tiene un formato válido" });
             }
         },
 
@@ -70,18 +67,18 @@ module.exports = {
             if (!dni) return res.status(400).json({ error: "Not enough parameters/Faltan parametros" });
             else {
                 const especialista = await EspecialistaModel.findOne({ dni });
-                if (esValidoDNI(dni)) {
+                if (especialista) {
                     EspecialistaModel.deleteOne({ dni }, (err) => {
                         if (err) {
                             return res.status(404).json({ error: "Especialista not found/Especialista no encontrado" });
                         } else {
                             userModel.deleteOne({ especialista: especialista._id }, (error) => {
-                                if (error) {} else return res.status(200).json({ ok: true });
+                                if (error) {} else return res.status(200).json({ ok: "El especialista fue eliminado." });
                             })
                         }
                     })
                 } else {
-                    return res.status(400).json({ error: "DNI INVALIDO" });
+                    return res.status(400).json({ error: "Especialista no encontrado" });
                 }
             }
         },

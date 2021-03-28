@@ -49,16 +49,16 @@ module.exports = {
                             .then((infoTurno) => {
                                 const newTurno = new TurnoModel(infoTurno);
                                 newTurno.save(newTurno);
-                                return res.status(201).json({ ok: "turno Creado correctamente" });
+                                return res.status(201).json({ ok: "turno creado correctamente" });
                             })
                             .catch((err) => {
                                 return res.status(400).json({ error: "turno no pudo crearse - " + err });
                             })
                     } else {
-                        return res.status(400).json({ error: "Ya existe un turno " });
+                        return res.status(400).json({ error: "Ya existe el turno - no pudo crearse " });
                     }
                 } else {
-                    return res.status(400).json({ error: "DNI INVALIDO" });
+                    return res.status(400).json({ error: "Alguno de los DNI no es válido" });
                 }
             } else {
                 return res.status(400).json({ error: "Faltan propiedades" });
@@ -66,7 +66,7 @@ module.exports = {
         },
 
         async putTurno(req, res) { // Actualiza los datos de un usuario pasandole el nombre o email como parametro
-            const { id } = req.params;
+            const { params: { id } } = req;
             const { paciente, estado } = req.body;
             const update = {};
             if (paciente) update.paciente = paciente;

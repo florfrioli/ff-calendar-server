@@ -13,6 +13,25 @@ class Paciente extends Persona {
         return this.obraSocial;
     };
 
+    getHistorialDeturnos() {
+        //return this.historialTurnos;
+    };
+
+    // --> falta implementar
+    tieneTurnoPendiente() {
+        //return (this.turnoActual != null); // si hay un turno pendiente
+    };
+
+    // Almacena un turno nuevo en el paciente --> terminar de ver si esto funciona
+    guardarTurno(unTurno) {
+        //this.historialTurnos.push(unTurno);
+    };
+
+    // Elimina todos los utrnos del paciente --> sin implementar
+    vaciarTurnos() {
+        //this.historialTurnos = [];
+    };
+
     getDTO() {
         let paciente = {
             name: nombrePropio(this.getNombre()),

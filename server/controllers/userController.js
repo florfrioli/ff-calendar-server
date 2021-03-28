@@ -88,7 +88,7 @@ module.exports = {
             const updateUser = await User.updateOne({ email }, update);
 
             if (updateUser.n) { //n == numero de documentos modificados
-                return res.status(200).json({ ok: true });
+                return res.status(200).json({ ok: "Usuario modificado correctamente" });
             } else {
                 return res.status(404).json({ error: "User not found/Usuario no encontrado" });
             }
@@ -102,7 +102,7 @@ module.exports = {
                 if (err) {
                     return res.status(404).json({ error: "User not found/Usuario no encontrado" });
                 } else {
-                    return res.status(200).json({ ok: true });
+                    return res.status(200).json({ ok: "Usuario eliminado correctamente" });
                 }
             })
         }

@@ -9,11 +9,11 @@ module.exports = {
             if (esValidoDNI(idordni)) {
                 const paciente = await PacienteModel.findOne({ dni: idordni });
                 if (paciente) return res.status(200).json({ paciente });
-                else return res.status(404).json({ error: "Not found/No encontrado" });
+                else return res.status(404).json({ error: " Pacient not found/ Paciente No encontrado" });
             } else {
                 const paciente = await PacienteModel.findOne({ _id: idordni });
                 if (paciente) return res.status(200).json({ paciente });
-                else return res.status(404).json({ error: "Not found/No encontrado" });
+                else return res.status(404).json({ error: "Pacient not found/ Paciente no encontrado" });
             }
         },
 
@@ -36,7 +36,7 @@ module.exports = {
                     return res.status(400).json({ error: "Faltan propiedades" });
                 }
             } else {
-                return res.status(400).json({ error: "DNI INVALIDO" });
+                return res.status(400).json({ error: "El DNI no tiene un formato válido" });
             }
         },
 
@@ -56,12 +56,12 @@ module.exports = {
                 const updatePaciente = await PacienteModel.updateOne({ dni }, update);
 
                 if (updatePaciente.n) { //n == numero de documentos modificados
-                    return res.status(200).json({ ok: true });
+                    return res.status(200).json({ ok: "Paciente modificado correctamente!" });
                 } else {
-                    return res.status(404).json({ error: "Paciente not found/Paciente no encontrado" });
+                    return res.status(404).json({ error: "Pacient not found/Paciente no encontrado" });
                 }
             } else {
-                return res.status(400).json({ error: "DNI INVALIDO" });
+                return res.status(400).json({ error: "El DNI no tiene un formato válido" });
             }
         },
 
@@ -70,20 +70,22 @@ module.exports = {
             if (!dni) return res.status(400).json({ error: "Not enough parameters/Faltan parametros" });
             if (esValidoDNI(dni)) {
                 const paciente = await PacienteModel.findOne({ dni });
-                await TurnoModel.deleteMany({ paciente: paciente._id });
-                PacienteModel.deleteOne({
-                    dni
-                }, (err) => {
-                    //Aunque no haya un documento que borrar nunca trae errores
-                    //Esta query siempre devuelve status 200 como si hubiera borrado
-                    if (err) {
-                        return res.status(404).json({ error: "PacienteModel not found/PacienteModel no encontrado" });
-                    } else {
-                        return res.status(200).json({ ok: true });
-                    }
-                })
+                if (paciente) {
+                    await TurnoModel.deleteMany({ paciente: paciente._id });
+                    PacienteModel.deleteOne({
+                        dni
+                    }, (err) => {
+                        //Aunque no haya un documento que borrar nunca trae errores
+                        //Esta query siempre devuelve status 200 como si hubiera borrado
+                        if (err) {
+                            return res.status(404).json({ error: "Pacient not found/Paciente no encontrado" });
+                        } else {
+                            return res.status(200).json({ ok: "El paciente fue eliminado" });
+                        }
+                    })
+                } else return res.status(404).json({ error: "Pacient not found/Paciente no encontrado" });
             } else {
-                return res.status(400).json({ error: "DNI INVALIDO" });
+                return res.status(400).json({ error: "El DNI no tiene un formato válido" });
             }
         },
 
