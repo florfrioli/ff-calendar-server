@@ -4,10 +4,10 @@ const bcrypt = require('bcrypt-nodejs');
 //Generamos un schema de los datos que manejara nuestra entidad
 //Este es super basico se le pueden agregar condiciones de Required y demas
 const userSchema = new Schema({
-    email: String,
+    email: { type: String, require: true },
     password: String,
     especialista: { type: Schema.Types.ObjectId },
-    token: String,
+    uid: { type: String, require: true }, //Cambiar por userid de firebase
     admin: Boolean
 });
 

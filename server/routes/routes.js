@@ -3,39 +3,40 @@ const { getUserLogeado, signInUser, signInWithMail, getUser, postUser, putUser, 
 const { getAllPacientes, getPaciente, postPaciente, putPaciente, deletePaciente } = require('../controllers/pacienteController'); //Traemos las funciones controladores
 const { getAllEspecialistas, getEspecialista, postEspecialista, putEspecialista, deleteEspecialista } = require('../controllers/especialistaController'); //Traemos las funciones controladores
 const { getAllTurnos, getTurno, postTurno, putTurno, deleteTurno, getTurnoPaciente, getTurnoEspecialista } = require('../controllers/turnoController'); //Traemos las funciones controladores
-const verifyToken = require('../services/validate-token');
+const { verifyToken, getUserByUID, verifyPermisos } = require('../services/validate-token');
 
 // Rutas Usuarios:
-routes.get("/api/user/:email", getUser);
+//routes.get("/api/user/:email", getUser);
 routes.post("/api/user", postUser);
-routes.put("/api/user/:email", putUser);
-routes.delete("/api/user", deleteUser);
-routes.post('/api/user/signup', postUser);
-routes.post('/api/user/signin', signInUser);
-routes.post('/api/check-user', signInWithMail);
-routes.get("/api/user/session/:token", getUserLogeado);
+//routes.put("/api/user/:email", putUser);
+//routes.delete("/api/user", deleteUser);
+routes.post('/api/user/signup', postUser); // listo
+routes.post('/api/user/signin', signInUser); // listo ?
+routes.post('/api/check-user', signInWithMail); // listo
+routes.get("/api/user", verifyToken, getUserByUID, getUserLogeado);
 
 // Rutas Pacientes:
-routes.get("/api/paciente", verifyToken, getAllPacientes);
-routes.get("/api/paciente/:idordni", verifyToken, getPaciente);
-routes.post("/api/paciente", verifyToken, postPaciente);
-routes.put("/api/paciente/:dni", verifyToken, putPaciente);
-routes.delete("/api/paciente", verifyToken, deletePaciente);
+routes.get("/api/paciente", verifyToken, getUserByUID, getAllPacientes);
+routes.get("/api/paciente/:idordni", verifyToken, getUserByUID, getPaciente);
+routes.post("/api/paciente", verifyToken, getUserByUID, postPaciente);
+routes.put("/api/paciente/:dni", verifyToken, getUserByUID, putPaciente);
+routes.delete("/api/paciente", verifyToken, getUserByUID, deletePaciente);
 
 // Rutas Turnos:
-routes.get("/api/turno", verifyToken, getAllTurnos);
-routes.get("/api/turno/:idordni", verifyToken, getTurno);
-routes.get("/api/turno/paciente/:id", verifyToken, getTurnoPaciente);
-routes.get("/api/turno/especialista/:id", verifyToken, getTurnoEspecialista);
-routes.post("/api/turno", verifyToken, postTurno);
-routes.put("/api/turno/:id", verifyToken, putTurno);
-routes.delete("/api/turno", verifyToken, deleteTurno);
+routes.get("/api/turno", verifyToken, getUserByUID, getAllTurnos);
+routes.get("/api/turno/:idordni", verifyToken, getUserByUID, getTurno);
+routes.get("/api/turno/paciente/:id", verifyToken, getUserByUID, getTurnoPaciente);
+routes.get("/api/turno/especialista/:id", verifyToken, getUserByUID, getTurnoEspecialista);
+routes.post("/api/turno", verifyToken, getUserByUID, postTurno);
+routes.put("/api/turno/:id", verifyToken, getUserByUID, putTurno);
+routes.delete("/api/turno", verifyToken, getUserByUID, deleteTurno);
 
 // Rutas Especialistas:
-routes.get("/api/especialista", verifyToken, getAllEspecialistas);
-routes.get("/api/especialista/:idordni", verifyToken, getEspecialista);
-routes.post("/api/especialista", verifyToken, postEspecialista);
-routes.put("/api/especialista/:dni", verifyToken, putEspecialista);
-routes.delete("/api/especialista", verifyToken, deleteEspecialista);
+routes.get("/api/especialista", verifyToken, getUserByUID, getAllEspecialistas);
+routes.get("/api/especialista/:idordni", verifyToken, getUserByUID, getEspecialista);
+routes.post("/api/especialista", verifyToken, getUserByUID, postEspecialista);
+routes.put("/api/especialista/:dni", verifyToken, getUserByUID, putEspecialista);
+routes.delete("/api/especialista", verifyToken, getUserByUID, deleteEspecialista);
+//routes.delete("/api/especialista", verifyToken, getUserByUID, verifyPermisos, deleteEspecialista); // ver de que solo el admin agregue y borre especialistas.
 
 module.exports = routes;

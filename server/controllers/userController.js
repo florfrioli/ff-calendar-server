@@ -1,6 +1,7 @@
 const User = require('../models/userSchema'); // Traigo mi modelo de esquema User
 const EspecialistaModel = require('../models/especialistaSchema');
 const UserModel = require('../models/userSchema');
+var admin = require('firebase-admin');
 /* const jwt = require('jsonwebtoken'); */
 module.exports = {
         async signInUser(req, res) {
@@ -9,7 +10,7 @@ module.exports = {
                 const checkUsuario = await UserModel.findOne({ email });
                 if (checkUsuario) {
                     console.log("Se logueo: " + checkUsuario.email);
-                    return res.status(200).json({ token: checkUsuario.token, admin: checkUsuario.admin });
+                    return res.status(200).json({ admin: checkUsuario.admin });
                 } else return res.status(404).json({ error: "Usuario Not found/No encontrado" });
             } else return res.status(400).json({ error: "Faltan propiedades" });
         },
@@ -24,7 +25,7 @@ module.exports = {
                     return res.status(200).json({ ok: "Puede registrarse" });
                 } else if (checkUser) {
                     if (checkUser.admin) return res.status(200).json({ ok: "Puede registrarse" });
-                } else return res.status(404).json({ error: "Usuario Not found/No encontrado" });
+                } else return res.status(404).json({ error: "El email no corresponde a un especialista" });
             } else return res.status(400).json({ error: "Faltan propiedades" });
         },
 
@@ -36,20 +37,19 @@ module.exports = {
         },
 
         async getUserLogeado(req, res) { // Nos devuelve un usuario, en caso de no encontrarlo devuelve 404
-            const { params: { token } } = req;
-            //console.log("LLego busqueda con token: " + token);
-            const user = await User.findOne({ token });
+            const user = req.user;
+            //console.log('user logueado: ' + user);
             if (user) {
                 const especialista = await EspecialistaModel.findOne({ _id: user.especialista });
                 return res.status(200).json({ especialista });
-            } else return res.status(404).json({ error: "Not found/No encontrado" });
+            } else return res.status(404).json({ error: "Not found/No encontrado" }); //console.log("LLego busqueda con token: " + token);
         },
 
         async postUser(req, res) { // Agrega un usuario si se pasan nombre, apellido y email en el body de la request
-            const { email, password, token } = req.body;
+            const { email, password, uid } = req.body;
             //console.log("---->Llega un post con: " + email + "- " + password + "- " + token);
-            if (password && email && token) {
-                const checkUser = await User.findOne({ email });
+            if (password && email && uid) {
+                const checkUser = await User.findOne({ $or: [{ email }, { uid }] });
                 const checkEsp = await EspecialistaModel.findOne({ email });
                 if (checkEsp) {
                     if (!checkUser) {
@@ -57,15 +57,14 @@ module.exports = {
                         newUser.password = newUser.encryptPassword(password);
                         newUser.especialista = checkEsp._id;
                         newUser.admin = false;
-                        newUser.token = token;
+                        newUser.uid = uid;
                         newUser.save(newUser);
-                        return res.status(201).json({ ok: "usuario creado correctamente" });
-                    } else return res.status(404).json({ error: "YA existe un usuario" });
+                        return res.status(201).json({ ok: "Usuario creado correctamente" });
+                    } else return res.status(404).json({ error: "Ya existe un usuario" });
                 } else {
                     if (checkUser) {
                         const update = {};
                         if (password) update.password = new User().encryptPassword(password);
-                        if (token) update.token = token;
                         const updateUser = await User.updateOne({ email }, update);
                         if (updateUser.admin) {
                             if (updateUser.n) { //n == numero de documentos modificados
